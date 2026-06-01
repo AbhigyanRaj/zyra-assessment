@@ -36,6 +36,12 @@ Both frontend and backend are equipped with tests using **Vitest**.
 - **Backend (Integration Tests):** `cd backend && npm run test`
 - **Frontend (Unit Tests):** `cd frontend && npx vitest run`
 
+#### Backend Integration Tests Output
+![Backend Tests](./assets/backend-test.png)
+
+#### Frontend Unit Tests Output
+![Frontend Tests](./assets/frontend-test.png)
+
 ## Architecture Overview
 
 - **Frontend**: Utilizes `Zustand` for client state management and `@tanstack/react-query` for server state and optimistic UI updates. The styling is powered by Tailwind CSS v4, adhering to a strict, accessible design system.
