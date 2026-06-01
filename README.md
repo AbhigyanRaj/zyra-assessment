@@ -1,6 +1,6 @@
 # Zyra Assessment
 
-This repository contains the implementation for the Zyra Software Engineer Assessment (Task 1). It consists of a React frontend and a Node.js backend.
+This repository contains the implementation for the Zyra Software Engineer Assessment, including **Task 1: Core Assessment** and **Task 2: Backend Bonus**. It consists of a React frontend and a Node.js backend.
 
 ## Project Structure
 
