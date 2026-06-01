@@ -4,7 +4,9 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import studentRoutes from './routes/students.routes';
 import taskRoutes from './routes/tasks.routes';
-import { timeStamp } from 'node:console';
+import { requestId } from './middleware/requestId';
+import { requestLogger } from './middleware/requestLogger';
+import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
 
@@ -17,6 +19,10 @@ const limiter = rateLimit({
   message: { error: 'Too many requests, please try again later in 15 mins' }
 });
 app.use(limiter);
+
+// Observability Middlewares
+app.use(requestId);
+app.use(requestLogger);
 
 // Middleware
 app.use(cors({
@@ -41,5 +47,8 @@ app.get('/health', (req: Request, res: Response) => {
 //routes
 app.use('/students', studentRoutes);
 app.use('/tasks', taskRoutes);
+
+// Global Error Handler (must be defined after routes)
+app.use(errorHandler);
 
 export default app;

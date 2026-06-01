@@ -1,6 +1,6 @@
-# Zyra Assessment - Backend (Task 1)
+# Zyra Assessment - Backend (Task 1 & 2)
 
-This repository contains the backend implementation for the Counselor Student Action Center (Task 1). 
+This repository contains the backend implementation for the Counselor Student Action Center. 
 
 ## Setup & Run Instructions
 
@@ -25,6 +25,13 @@ Start the development server:
 npm run dev
 ```
 The server will start on `http://localhost:3001` (or your configured `PORT`).
+
+### Running Tests (Task 2)
+The backend features an integration test suite powered by **Vitest** and **Supertest**.
+To run the tests:
+```bash
+npm run test
+```
 
 ---
 
