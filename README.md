@@ -2,6 +2,11 @@
 
 This repository contains the implementation for the Zyra Software Engineer Assessment, including **Task 1: Core Assessment** and **Task 2: Backend Bonus**. It consists of a React frontend and a Node.js backend.
 
+## Live Demo
+
+- **Frontend (Vercel):** [https://zyra.wuup.in](https://zyra.wuup.in)
+- **Backend API (Render):** [https://zyra-9dof.onrender.com](https://zyra-9dof.onrender.com)
+
 ## Project Structure
 
 - `/frontend` - React application built with Vite, TypeScript, and Tailwind CSS.
