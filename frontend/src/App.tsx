@@ -219,6 +219,11 @@ function App() {
           </main>
 
         </div>
+        
+        {/* ── Footer ─────────────────────────────────────────────── */}
+        <footer className="py-8 text-center text-[13px] text-muted-foreground/60 border-t border-border/50 mt-12">
+          Crafted with ♥ by <span className="font-medium text-muted-foreground">Abhigyan</span> for Zyra
+        </footer>
       </div>
 
       <Toaster
