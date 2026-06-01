@@ -1,1 +1,170 @@
+/* 1. Font imports — Space Grotesk for logo brand feel, Inter for body */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+/* 2. Tailwind v4 theme tokens */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-brand: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+
+  /* Radius system */
+  --radius-sm:  0.375rem;
+  --radius-md:  0.5rem;
+  --radius-lg:  0.75rem;
+  --radius-xl:  1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
+
+  /* Map CSS vars into Tailwind color utilities */
+  --color-background:          var(--background);
+  --color-foreground:          var(--foreground);
+  --color-card:                var(--card);
+  --color-card-foreground:     var(--card-foreground);
+  --color-border:              var(--border);
+  --color-input:               var(--input);
+  --color-primary:             var(--primary);
+  --color-primary-foreground:  var(--primary-foreground);
+  --color-secondary:           var(--secondary);
+  --color-secondary-foreground:var(--secondary-foreground);
+  --color-muted:               var(--muted);
+  --color-muted-foreground:    var(--muted-foreground);
+  --color-accent:              var(--accent);
+  --color-accent-foreground:   var(--accent-foreground);
+  --color-brand:               var(--brand);
+  --color-brand-foreground:    var(--brand-foreground);
+  --color-success:             var(--success);
+  --color-warning:             var(--warning);
+}
+
+/* ─────────────────────────────────────────
+   LIGHT MODE  — Matches Zyra.ai's website
+   Light lavender-blue bg, white cards,
+   Zyra indigo (#4F46E5) as brand accent
+───────────────────────────────────────── */
+:root {
+  /* Page background — Zyra's signature light lavender */
+  --background: #eef2ff;
+  --foreground: #0f0f10;
+
+  /* Card surface — pure white, sits on the lavender bg */
+  --card:             #ffffff;
+  --card-foreground:  #0f0f10;
+  --border:           #e2e5f1;
+  --input:            #e2e5f1;
+
+  /* Primary — near black for text buttons */
+  --primary:            #0f0f10;
+  --primary-foreground: #ffffff;
+
+  /* Secondary — subtle off-white, used for pill bg etc. */
+  --secondary:            #f3f4f8;
+  --secondary-foreground: #0f0f10;
+
+  /* Muted */
+  --muted:            #f3f4f8;
+  --muted-foreground: #6b7280;
+
+  /* Generic accent (hover bg) */
+  --accent:            #f3f4f8;
+  --accent-foreground: #0f0f10;
+
+  /* ── Zyra brand indigo — the signature colour ── */
+  --brand:            #4f46e5;
+  --brand-foreground: #ffffff;
+
+  /* Status colours */
+  --success: #10b981;
+  --warning: #f59e0b;
+}
+
+/* ─────────────────────────────────────────
+   DARK MODE  — Warm dark tone (#20201E base)
+   All surfaces are warm-tinted, never cold.
+   No blues, no slates — pure warm grays.
+───────────────────────────────────────── */
+.dark {
+  /* Page bg — user's warm dark #20201E */
+  --background: #20201E;
+  --foreground: #F2F2EF;
+
+  /* Cards — one step lighter, still warm */
+  --card:            #2A2A27;
+  --card-foreground: #F2F2EF;
+  --border:          #38382F;
+  --input:           #38382F;
+
+  /* Primary — warm white on warm dark */
+  --primary:            #F2F2EF;
+  --primary-foreground: #20201E;
+
+  /* Secondary — hover/chip surfaces */
+  --secondary:            #313130;
+  --secondary-foreground: #F2F2EF;
+
+  /* Muted — low-emphasis text / bg */
+  --muted:            #313130;
+  --muted-foreground: #A8A8A0;
+
+  /* Accent */
+  --accent:            #313130;
+  --accent-foreground: #F2F2EF;
+
+  /* Brand becomes warm white in dark — no blue */
+  --brand:            #F2F2EF;
+  --brand-foreground: #20201E;
+}
+
+/* ─────────────────────────────────────────
+   BASE STYLES
+───────────────────────────────────────── */
+@layer base {
+  *, ::after, ::before {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ─────────────────────────────────────────
+   UTILITY: Brand font (Space Grotesk)
+───────────────────────────────────────── */
+.font-brand {
+  font-family: var(--font-brand);
+}
+
+/* ─────────────────────────────────────────
+   UTILITY: Zyra-style subtle grid texture
+   Matches the grid lines visible on zyra.ai
+───────────────────────────────────────── */
+.grid-texture {
+  background-image:
+    linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+/* In warm dark mode use warm-toned (brownish) grid lines */
+.dark .grid-texture {
+  background-image:
+    linear-gradient(to right, rgba(242, 242, 239, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(242, 242, 239, 0.04) 1px, transparent 1px);
+}
+
+/* ─────────────────────────────────────────
+   UTILITY: Subtle card hover lift
+───────────────────────────────────────── */
+.hover-lift {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px -4px rgba(79, 70, 229, 0.08), 0 4px 12px -2px rgba(0,0,0,0.04);
+}
+/* Warm-tinted shadow in dark mode */
+.dark .hover-lift:hover {
+  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.5), 0 4px 12px -2px rgba(0,0,0,0.3);
+}

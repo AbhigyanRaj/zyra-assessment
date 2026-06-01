@@ -42,32 +42,39 @@ Retrieves the prioritized action center data for a specific student, including t
 {
   "student": {
     "id": "stu_001",
-    "name": "Alex Johnson",
-    "grade": "12th",
-    "status": "at_risk"
+    "name": "Maya Patel",
+    "email": "maya.patel@school.edu",
+    "grade": 11,
+    "gpa": 3.2,
+    "counselorId": "csl_001",
+    "enrollmentStatus": "at_risk"
   },
   "tasks": [
     {
       "id": "tsk_001",
       "studentId": "stu_001",
-      "title": "Submit Common App Essay",
+      "title": "Submit FAFSA application",
+      "description": "Deadline is approaching. Student has not started the form.",
       "status": "todo",
       "priority": "urgent",
-      "dueDate": "2023-11-01T00:00:00Z",
-      "updatedAt": "2023-10-15T00:00:00Z"
+      "dueDate": "2026-06-05",
+      "createdAt": "2026-05-13T14:00:00Z",
+      "updatedAt": "2026-05-13T14:00:00Z"
     }
   ],
   "messages": [
     {
       "id": "msg_001",
       "studentId": "stu_001",
-      "preview": "Can you review my latest draft?",
+      "from": "Mrs. Thompson (Math)",
+      "subject": "Maya missing assignments",
+      "preview": "Maya has not submitted the last three homework sets...",
       "read": false,
-      "timestamp": "2023-10-25T10:30:00Z"
+      "receivedAt": "2026-05-30T08:30:00Z"
     }
   ],
-  "unreadCount": 1,
-  "urgentTaskCount": 1
+  "unreadCount": 2,
+  "urgentTaskCount": 2
 }
 ```
 
@@ -127,3 +134,4 @@ Updates the status of a specific task.
   - **Runtime Validation:** **Zod** is used to validate incoming request bodies (e.g., in the `PATCH` route) to ensure strict API contracts and prevent bad data from reaching the service layer.
   - **Security & Reliability:** The backend is secured with **Helmet** (HTTP headers) and **express-rate-limit** (in-memory rate limiting, designed to easily plug into Redis). CORS is strictly configured to only allow requests from the local development frontend and the production domain.
   - **Computed Metrics:** Metrics like `unreadCount` and `urgentTaskCount` are computed dynamically on the server-side to ensure the client receives ready-to-use numbers without needing to parse heavy array payloads.
+  - **Authentication (Note):** In a production environment, the `counselorId` would be extracted from a verified JWT or session cookie and used to scope the student query (e.g., only return students assigned to the logged-in counselor). For the scope of this assessment, it is currently hardcoded on the frontend.
