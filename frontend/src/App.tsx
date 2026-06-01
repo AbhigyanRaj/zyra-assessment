@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { useActionCenter } from './api/queries';
@@ -8,6 +8,7 @@ import { TaskList } from './components/action-center/TaskList';
 import { MessageList } from './components/action-center/MessageList';
 import { Skeleton } from './components/ui/Skeleton';
 import { cn } from './lib/utils';
+import { ChevronDown, Search, Check } from 'lucide-react';
 
 const queryClient = new QueryClient();
 
@@ -83,9 +84,24 @@ function ActionCenter({ studentId }: ActionCenterProps) {
 // ─── App ─────────────────────────────────────────────────────────────────────
 function App() {
   // Active student — counselor selects which student to review.
-  // Defaults to stu_001. React Query caches each student separately,
-  // so switching back is instant.
   const [activeStudentId, setActiveStudentId] = useState<string>('stu_001');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const activeStudent = STUDENTS.find(s => s.id === activeStudentId) || STUDENTS[0];
+  const filteredStudents = STUDENTS.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -105,53 +121,96 @@ function App() {
             </div>
           </header>
 
-          {/* ── Page heading ───────────────────────────────────────── */}
-          <div className="mb-6">
-            <h1 className="text-[28px] font-bold tracking-tight text-foreground">Action Center</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Select a student below to review their priorities, tasks, and messages.
-            </p>
-          </div>
+          {/* ── Page heading & Student Selector ────────────────────── */}
+          <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <h1 className="text-[28px] font-bold tracking-tight text-foreground">Action Center</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Select a student to review their priorities, tasks, and messages.
+              </p>
+            </div>
 
-          {/* ── Student selector ───────────────────────────────────── */}
-          {/*
-            This demonstrates the dynamic /students/:id/action-center endpoint.
-            In production, this list would come from GET /counselors/:id/students
-            (scoped by a JWT-authenticated counselorId). Currently uses the 3
-            mock students all assigned to counselorId: "csl_001".
-          */}
-          <div className="flex items-center gap-2 mb-8 flex-wrap">
-            {STUDENTS.map(student => {
-              const isActive = activeStudentId === student.id;
-              const isAtRisk = student.status === 'at_risk';
-              return (
-                <button
-                  key={student.id}
-                  onClick={() => setActiveStudentId(student.id)}
-                  className={cn(
-                    'flex items-center gap-2.5 px-4 py-2 rounded-xl border text-sm font-medium transition-all',
-                    isActive
-                      ? 'bg-card border-brand/40 text-foreground shadow-sm'
-                      : 'bg-card/50 border-border text-muted-foreground hover:text-foreground hover:bg-card hover:border-border'
-                  )}
-                >
-                  {/* Avatar initials */}
+            {/* Scalable Student Dropdown Selector (Handles 1000+ students) */}
+            <div className="relative z-10" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className={cn(
+                  "flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all w-full md:w-[260px]",
+                  isDropdownOpen 
+                    ? "bg-card border-brand/40 shadow-sm text-foreground" 
+                    : "bg-card/50 border-border text-foreground hover:bg-card"
+                )}
+              >
+                <div className="flex items-center gap-2.5 overflow-hidden">
                   <span className={cn(
-                    'h-6 w-6 rounded-lg flex items-center justify-center text-[10px] font-bold flex-shrink-0',
-                    isActive
-                      ? 'bg-brand/10 text-brand'
-                      : 'bg-secondary text-muted-foreground'
+                    "h-6 w-6 rounded-lg flex items-center justify-center text-[10px] font-bold flex-shrink-0 bg-brand/10 text-brand"
                   )}>
-                    {student.initials}
+                    {activeStudent.initials}
                   </span>
-                  {student.name}
-                  {/* Risk dot */}
-                  {isAtRisk && (
-                    <span className="h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                  <span className="truncate">{activeStudent.name}</span>
+                  {activeStudent.status === 'at_risk' && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0 ml-1" />
                   )}
-                </button>
-              );
-            })}
+                </div>
+                <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", isDropdownOpen && "rotate-180")} />
+              </button>
+
+              {isDropdownOpen && (
+                <div className="absolute top-full mt-2 right-0 w-full md:w-[280px] bg-card border border-border rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="p-2 border-b border-border">
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <input
+                        type="text"
+                        placeholder="Search students..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full bg-secondary/50 border border-transparent focus:border-brand/30 focus:bg-secondary rounded-lg pl-9 pr-3 py-2 text-sm outline-none transition-all placeholder:text-muted-foreground/70 text-foreground"
+                        autoFocus
+                      />
+                    </div>
+                  </div>
+                  <div className="max-h-[300px] overflow-y-auto p-1 scrollbar-hide">
+                    {filteredStudents.length === 0 ? (
+                      <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+                        No students found.
+                      </div>
+                    ) : (
+                      filteredStudents.map(student => (
+                        <button
+                          key={student.id}
+                          onClick={() => {
+                            setActiveStudentId(student.id);
+                            setIsDropdownOpen(false);
+                            setSearchQuery('');
+                          }}
+                          className={cn(
+                            "flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm transition-colors",
+                            activeStudentId === student.id
+                              ? "bg-brand/10 text-brand font-medium"
+                              : "hover:bg-secondary text-foreground"
+                          )}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <span className={cn(
+                              "h-6 w-6 rounded-md flex items-center justify-center text-[10px] font-bold flex-shrink-0",
+                              activeStudentId === student.id ? "bg-brand/20" : "bg-secondary text-muted-foreground border border-border/50"
+                            )}>
+                              {student.initials}
+                            </span>
+                            {student.name}
+                            {student.status === 'at_risk' && (
+                              <span className="h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                            )}
+                          </div>
+                          {activeStudentId === student.id && <Check className="h-4 w-4" />}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* ── Action Center content ──────────────────────────────── */}
